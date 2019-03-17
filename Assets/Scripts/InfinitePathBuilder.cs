@@ -6,32 +6,39 @@ public class InfinitePathBuilder : MonoBehaviour {
 
 	public Transform racePathSimple;
 
-	private float zAxisPosition =0f;
+	public float zAxisPositionValue = 0f;
 
 	// Use this for initialization
 	void Start () {
-		Instantiate(racePathSimple, 
-			new Vector3(-12.18895f, 0.005062461f, 53.03f), 
-			racePathSimple.rotation);
+		var firstPathSegementClone = Instantiate(racePathSimple, 
+										new Vector3(-12.18895f, 0.005062461f, 53.03f), 
+										racePathSimple.rotation);
 
-		Instantiate(racePathSimple, 
-			new Vector3(-12.18895f, 0.005062461f, 57.03f), 
-			racePathSimple.rotation);
-		Instantiate(racePathSimple, 
-			new Vector3(-12.18895f, 0.005062461f, 61.03f), 
-			racePathSimple.rotation);
+		var secondPathSegmentClone = Instantiate(racePathSimple, 
+										new Vector3(-12.18895f, 0.005062461f, 57.03f), 
+										racePathSimple.rotation);
+		var thirdPathSegmentClone = Instantiate(racePathSimple, 
+										new Vector3(-12.18895f, 0.005062461f, 61.03f), 
+										racePathSimple.rotation);
+		
+		GlobalVariables.RacePaths.Enqueue(firstPathSegementClone);
+		GlobalVariables.RacePaths.Enqueue(secondPathSegmentClone);
+		GlobalVariables.RacePaths.Enqueue(thirdPathSegmentClone);
 	}
 	
 	// Update is called once per frame
-	void Update () {
-		
-		if(zAxisPosition < 120)
-		{
-			Instantiate(racePathSimple, 
-				new Vector3(-12.18895f, 0.005062461f, zAxisPosition), 
-				racePathSimple.rotation);
+	void Update () 
+	{
+		 if(GlobalVariables.zAxisMovement != 0
+		 && GlobalVariables.zAxisPosition - GlobalVariables.playerPositionOnZAxis < 100)
+		 {
+			var clone = Instantiate(racePathSimple, 
+						new Vector3(-12.18895f, 0.005062461f, GlobalVariables.zAxisPosition), 
+						racePathSimple.rotation);
+			
+			GlobalVariables.RacePaths.Enqueue(clone);
 
-			zAxisPosition+=4;
+			GlobalVariables.zAxisPosition+=4;
 		}
 	}
 }

@@ -1429,7 +1429,6 @@ MonoBehaviour:
   MoveForward: 273
   SlowDown: 274
   horizontalMovement: 0
-  collisionObject: 
 --- !u!20 &282840813
 Camera:
   m_ObjectHideFlags: 0
@@ -2805,7 +2804,6 @@ MonoBehaviour:
   MoveForward: 273
   SlowDown: 274
   horizontalMovement: 0
-  collisionObject: 
 --- !u!54 &1041318191
 Rigidbody:
   m_ObjectHideFlags: 0
