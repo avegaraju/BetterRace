@@ -21,7 +21,7 @@ public class PlayerDestroyer : MonoBehaviour {
 		{
 			Instantiate(explosion, transform.position, transform.rotation);
 			Destroy(collider.gameObject, 0.5f);
-			GlobalVariables.zAxisMovement =0;
+			GlobalVariables.HasCollided = true;
 		}
 	}
 }

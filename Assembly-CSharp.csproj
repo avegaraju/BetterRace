@@ -54,6 +54,11 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\GlobalVariables.cs" />
+     <Compile Include="Assets\Scripts\Helpers\ForwardControl.cs" />
+     <Compile Include="Assets\Scripts\Helpers\LeftControl.cs" />
+     <Compile Include="Assets\Scripts\Helpers\PlayerController.cs" />
+     <Compile Include="Assets\Scripts\Helpers\RightControl.cs" />
+     <Compile Include="Assets\Scripts\Helpers\SlowDownControl.cs" />
      <Compile Include="Assets\Scripts\InfinitePathBuilder.cs" />
      <Compile Include="Assets\Scripts\MoveCamera.cs" />
      <Compile Include="Assets\Scripts\PlayerDestroyer.cs" />

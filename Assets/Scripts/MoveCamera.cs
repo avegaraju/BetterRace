@@ -8,75 +8,81 @@ public class MoveCamera : MonoBehaviour {
 	public KeyCode MoveRight;
 	public KeyCode MoveForward;
 	public KeyCode SlowDown;
-	public float horizontalMovement = 0f;
-	public float RigidbodyPosition =0f;
-	public float GeneratorPosition =0f;
-
+	private float _horizontalMovement = 0f;
+	
 	private float defaultSpeed = 8f;
 	private float speed = 8f;
 	private float rateOfSpeed = 10f;
+	private Rigidbody _player;
 	
+	PlayerController _playerController;
 
 	// Use this for initialization
 	void Start () {
-		
+		_player = GetComponent<Rigidbody>();
+		_playerController = new PlayerController(_player,
+													new LeftControl(),
+													new RightControl(),
+													new ForwardControl(),
+													new SlowDownControl());
 	}
 	
 	// Update is called once per frame
-	void Update () {
-		var rigidbody = GetComponent<Rigidbody>();
-		rigidbody.velocity= new Vector3(horizontalMovement, 
-															0, 
-															speed * GlobalVariables.zAxisMovement);	
+	void Update ()
+    {
+		_playerController.UpdatePlayerVelocity(_horizontalMovement);
 		
-		GlobalVariables.playerPositionOnZAxis = rigidbody.position.z;
+        GlobalVariables.playerPositionOnZAxis = _player.position.z;
+		
+        if (Input.GetKeyDown(MoveForward))
+        {
+			_playerController.MoveForward();
+        }
 
-		if(Input.GetKeyDown(MoveForward))
-		{
-			speed = speed + rateOfSpeed;
-			StartCoroutine(WaitForHalfASecond());
-		}
+        if (Input.GetKeyUp(MoveForward))
+        {
+			_playerController.ResetToDefaultSpeed();
+        }
 
-		if(Input.GetKeyUp(MoveForward))
-		{
-			speed = defaultSpeed;
-			StartCoroutine(WaitForHalfASecond());
-		}
+        if (Input.GetKeyUp(SlowDown))
+        {
+			_playerController.ResetToDefaultSpeed();
+        }
 
-		if(Input.GetKeyUp(SlowDown))
-		{
-			speed = defaultSpeed;
-			StartCoroutine(WaitForHalfASecond());
-		}
+        if (Input.GetKeyDown(SlowDown))
+        {
+			_playerController.SlowDown();
+        }
 
-		if(Input.GetKeyDown(SlowDown))
-		{
-			speed = defaultSpeed/2;
-			StartCoroutine(WaitForHalfASecond());
-		}
-
-		if(Input.GetKeyDown(MoveLeft))
-		{
-			horizontalMovement = -2f;
-			StartCoroutine(WaitForHalfASecond());
-		}
-
-		if(Input.GetKeyDown(MoveRight))
-		{
-			horizontalMovement = 2f;
-			StartCoroutine(WaitForHalfASecond());
+        if (Input.GetKeyDown(MoveLeft))
+        {
+			_horizontalMovement = _playerController.MoveLeft();
+			_playerController.UpdatePlayerVelocity(_horizontalMovement);
+            StartCoroutine(DelayAction());
 			
-		}
+        }
 
-		DestroyOutOfViewPath(rigidbody.position.z);
+        if (Input.GetKeyDown(MoveRight))
+        {
+			_horizontalMovement = _playerController.MoveRight();
+			_playerController.UpdatePlayerVelocity(_horizontalMovement);
+            StartCoroutine(DelayAction());
+        }
 
-		if(GlobalVariables.zAxisMovement == 0)
-		{
-			DestroyAllRacePathClones();
-		}
-	}
+        DestroyOutOfViewPathSegments();
+    }
 
-	void OnBecameInvisible()
+    private void DestroyOutOfViewPathSegments()
+    {
+        DestroyOutOfViewPath();
+
+        if (GlobalVariables.HasCollided)
+        {
+            DestroyAllRacePathClones();
+        }
+    }
+
+    void OnBecameInvisible()
 	{
 		Destroy(gameObject);
 	}
@@ -89,20 +95,25 @@ public class MoveCamera : MonoBehaviour {
 		}
 	}
 
-	void DestroyOutOfViewPath(float rigidBodyPosition)
+	void DestroyOutOfViewPath()
 	{
-		RigidbodyPosition = rigidBodyPosition;
-		GeneratorPosition = GlobalVariables.zAxisPosition;
 		var peedkedClone = GlobalVariables.RacePaths.Peek();
-		if(peedkedClone.position.z < rigidBodyPosition - 50)
+		
+		if(IsRacePathSegmentOutOfView(peedkedClone.position.z))
 		{
 			var clone = GlobalVariables.RacePaths.Dequeue();
 			Destroy(clone.gameObject);
 		}
 	}
-	IEnumerator WaitForHalfASecond()
+
+	bool IsRacePathSegmentOutOfView(float racePathSegmentPosition) 
+	{
+		return racePathSegmentPosition < GlobalVariables.playerPositionOnZAxis - 50;
+	} 
+
+	IEnumerator DelayAction()
 	{
 		yield return new WaitForSeconds(0.5f);
-		horizontalMovement = 0f;
+		_horizontalMovement = 0f;
 	}
 }

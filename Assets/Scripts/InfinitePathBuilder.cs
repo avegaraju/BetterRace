@@ -29,16 +29,16 @@ public class InfinitePathBuilder : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
-		 if(GlobalVariables.zAxisMovement != 0
-		 && GlobalVariables.zAxisPosition - GlobalVariables.playerPositionOnZAxis < 100)
+		 if(!GlobalVariables.HasCollided
+		 && GlobalVariables.DynamicPathGeneratorZAxisPosition - GlobalVariables.playerPositionOnZAxis < 100)
 		 {
 			var clone = Instantiate(racePathSimple, 
-						new Vector3(-12.18895f, 0.005062461f, GlobalVariables.zAxisPosition), 
+						new Vector3(-12.18895f, 0.005062461f, GlobalVariables.DynamicPathGeneratorZAxisPosition), 
 						racePathSimple.rotation);
 			
 			GlobalVariables.RacePaths.Enqueue(clone);
 
-			GlobalVariables.zAxisPosition+=4;
+			GlobalVariables.DynamicPathGeneratorZAxisPosition+=4;
 		}
 	}
 }
